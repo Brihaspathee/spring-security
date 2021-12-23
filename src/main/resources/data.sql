@@ -126,7 +126,7 @@ insert into user_role (user_id, role_id) values ('adcc0e68-b371-467e-904e-d66f06
 
 -----------------------------------------------------------------------------------------------------------------------
 -- Customers
-insert into customer(customer_id, first_name, last_name, date_of_birth, gender, marital_status user_id) values ('a7b4e7dc-15a6-4738-864e-8de92f4acd4f', 'balaji', 'varadharajan', '1983-05-21', 'MALE', 'MARRIED' 'adcc0e68-b371-467e-904e-d66f06c00db4');
+insert into customer(customer_id, first_name, last_name, date_of_birth, gender, marital_status, user_id) values ('a7b4e7dc-15a6-4738-864e-8de92f4acd4f', 'balaji', 'varadharajan', '1983-05-21', 'MALE', 'MARRIED', 'adcc0e68-b371-467e-904e-d66f06c00db4');
 
 -- Profiles
 insert into profile(profile_id, payment_method, favorite_vacation, customer_id) values ('5bb93f24-c7c7-43c3-ad05-7892c3a7a357', 'PayPal', 'California', 'a7b4e7dc-15a6-4738-864e-8de92f4acd4f');

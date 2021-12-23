@@ -1,13 +1,18 @@
 package com.example.springsecurity.config;
 
+import com.example.springsecurity.filters.JwtRequestFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Created in Intellij IDEA
@@ -21,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -29,13 +35,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/h2-console/**",
-            "/host"
+            "/host",
+            "/authenticate"
             // other public endpoints of your API may be appended to this array
     };
+
+    private final JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     @Override
@@ -45,8 +60,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             authorize.
                                     antMatchers(AUTH_WHITELIST).permitAll();
                         }
-                ).authorizeRequests().anyRequest().authenticated().and().httpBasic()
+                ).authorizeRequests().anyRequest().authenticated()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().httpBasic()
                 .and().csrf().disable();
         httpSecurity.headers().frameOptions().sameOrigin();
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
